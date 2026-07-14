@@ -43,6 +43,12 @@ const initHeroScrollEffect = () => {
 
   const update = () => {
     ticking = false;
+    /* QA advisory: a frame scheduled just before disable() ran must
+       not re-write --hero-progress after teardown. (ticking is reset
+       first so a later enable() can schedule frames again.) */
+    if (!active) {
+      return;
+    }
     const raw = window.scrollY / fadeDistance;
     const progress = Math.round(Math.min(Math.max(raw, 0), 1) * 1000) / 1000;
     if (progress === lastProgress) {
@@ -109,7 +115,50 @@ const initHeroScrollEffect = () => {
   applyMotionPreference();
 };
 
+/* ------------------------------------------------------------
+   Task 3.3 — Nav accessibility: focus management
+   ------------------------------------------------------------
+   Scrolling itself is native: the nav links are plain in-page
+   anchors and css/style.css sets `html { scroll-behavior:smooth }`
+   (with a reduced-motion fallback), so no JS scrolling is needed.
+
+   This enhancement only manages FOCUS: after a nav link is
+   activated, keyboard/screen-reader users should continue from
+   the target section, not from the nav. We move focus to the
+   section's heading with preventScroll so the native smooth
+   scroll is left untouched. Default anchor behaviour is never
+   prevented — the nav degrades gracefully without JS.
+   ------------------------------------------------------------ */
+const initNavFocusManagement = () => {
+  const nav = document.querySelector('.site-nav');
+  if (!nav) {
+    return;
+  }
+
+  nav.addEventListener('click', (event) => {
+    const link = event.target.closest('a[href^="#"]');
+    if (!link || !nav.contains(link)) {
+      return;
+    }
+
+    const targetId = link.getAttribute('href').slice(1);
+    const section = document.getElementById(targetId);
+    if (!section) {
+      return;
+    }
+
+    // Prefer the section heading; fall back to the section itself.
+    const focusTarget = section.querySelector('.section-title') || section;
+    if (!focusTarget.hasAttribute('tabindex')) {
+      // Programmatically focusable only — stays out of the tab order.
+      focusTarget.setAttribute('tabindex', '-1');
+    }
+    focusTarget.focus({ preventScroll: true });
+  });
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   initHeroScrollEffect();
-  // Interactivity (nav, section expand/collapse) is added in later tasks.
+  initNavFocusManagement();
+  // Section expand/collapse interactivity is added in later tasks.
 });

@@ -158,6 +158,89 @@ img {
 }
 
 /* ============================================================
+   Site navigation — Task 3.3
+   ------------------------------------------------------------
+   Sits directly below the full-viewport hero, so it is revealed
+   as the user scrolls and the hero shrinks away (user journey).
+   Everything lives under the single container class .site-nav —
+   Task 3.4 can hide the whole nav with one modifier on it.
+
+   Links use the shared card tokens (surface / border / radius /
+   shadow) to match the section entry cards. Colour pairings all
+   pass WCAG AA at normal size:
+     #141E61 on #FFFFFF ≈ 13.4:1, #EEEEEE on #141E61 ≈ 11.6:1.
+   ============================================================ */
+
+.site-nav {
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 0 var(--space-md) var(--space-lg);
+}
+
+.site-nav-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-sm);
+}
+
+.site-nav-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px; /* comfortable tap target on touch devices */
+  padding: var(--space-xs) var(--space-lg);
+  background-color: var(--color-surface);
+  border: var(--border-subtle);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  color: var(--color-secondary);
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.site-nav-link:hover {
+  background-color: var(--color-secondary);
+  border-color: var(--color-secondary);
+  color: var(--color-bg);
+}
+
+.site-nav-link:focus-visible {
+  outline: 3px solid var(--color-fourth);
+  outline-offset: 2px;
+}
+
+/* Keyboard focus indicator for section headings — js/main.js moves
+   focus to the target heading after a nav link is activated. */
+.section-title:focus-visible {
+  outline: 3px solid var(--color-fourth);
+  outline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-nav-link {
+    transition: none;
+  }
+}
+
+/* Mobile: stack the links full-width for easy tapping */
+@media (max-width: 600px) {
+  .site-nav-list {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* ============================================================
    Layout — main content + sections
    ============================================================ */
 
