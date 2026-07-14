@@ -79,10 +79,16 @@ img {
 
 /* ============================================================
    Hero — landing view (name left, portrait right)
-   Scroll-shrink behaviour is Task 3.2; this is the static layout.
+   Task 3.2: scroll-shrink. js/main.js writes --hero-progress
+   (0 = landing, 1 = fully faded) onto .hero as the user scrolls;
+   the hero content shrinks, slides upwards and fades out.
+   Transform + opacity only (compositor-friendly, no layout shift:
+   the hero keeps its 100vh box while its contents animate).
    ============================================================ */
 
 .hero {
+  /* Scroll progress, driven by js/main.js. Stays 0 without JS. */
+  --hero-progress: 0;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -97,6 +103,29 @@ img {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-xl);
+  /* Progressive shrink + upward slide + fade, proportional to scroll */
+  opacity: calc(1 - var(--hero-progress));
+  transform:
+    translateY(calc(var(--hero-progress) * -45vh))
+    scale(calc(1 - (var(--hero-progress) * 0.45)));
+  will-change: transform, opacity;
+}
+
+/* Fully faded: never intercept pointer input (belt-and-braces —
+   the hero scrolls out of flow anyway, so it cannot sit over the
+   content sections below it). */
+.hero--faded .hero-inner {
+  pointer-events: none;
+}
+
+/* Reduced motion: static hero, no shrink/translate/fade at all.
+   JS also disables its scroll handler; this is the CSS guard. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-inner {
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+  }
 }
 
 .hero-name {
