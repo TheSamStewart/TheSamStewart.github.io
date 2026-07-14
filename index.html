@@ -8,6 +8,80 @@
   <script src="js/main.js" defer></script>
 </head>
 <body>
-  <!-- Task 1.1 scaffold only. Hero, nav, and sections are built in later tasks. -->
+  <!-- Hero: populated in Task 3.1 -->
+  <header class="hero" id="top">
+    <!-- Task 3.1: name "Sam Stewart" + images/1781003854566.png -->
+  </header>
+
+  <!-- Nav: built in Task 3.3 -->
+  <nav class="site-nav" aria-label="Section navigation">
+    <!-- Task 3.3: links to the four sections below -->
+  </nav>
+
+  <main class="content">
+    <!--
+      ============================================================
+      TEMPLATE CONTRACT — copy/paste to add an entry to any section
+      ============================================================
+      Each entry is an <article> with a section block class:
+        Professional Experience -> class="experience"
+        Education                -> class="education-item"
+        Extra-Curricular         -> class="activity"
+        Technical Projects       -> class="project"
+
+      Every block uses the SAME sub-class shape ({block} = one of above):
+        <article class="{block}">
+          <h3  class="{block}-title">Headline (role / degree / project name)</h3>
+          <p   class="{block}-subtitle">Org / school / event</p>
+          <p   class="{block}-meta">Dates · location</p>
+          <div class="{block}-main-text">
+            <p>Description paragraph(s) or a <ul> of bullet points.</p>
+          </div>
+        </article>
+
+      Example — add a new project by pasting this into #technical-projects:
+        <article class="project">
+          <h3  class="project-title">Project name</h3>
+          <p   class="project-subtitle">Tech stack / role</p>
+          <p   class="project-meta">2026 · Personal</p>
+          <div class="project-main-text">
+            <p>What it does and what you built.</p>
+          </div>
+        </article>
+      ============================================================
+    -->
+
+    <section class="section" id="professional-experience" aria-labelledby="professional-experience-heading">
+      <h2 class="section-title" id="professional-experience-heading">Professional Experience</h2>
+      <div class="section-body">
+        <!-- Task 2.2: paste <article class="experience"> entries here -->
+      </div>
+    </section>
+
+    <section class="section" id="education" aria-labelledby="education-heading">
+      <h2 class="section-title" id="education-heading">Education</h2>
+      <div class="section-body">
+        <!-- Task 2.2: paste <article class="education-item"> entries here -->
+      </div>
+    </section>
+
+    <section class="section" id="extra-curricular" aria-labelledby="extra-curricular-heading">
+      <h2 class="section-title" id="extra-curricular-heading">Extra-Curricular &amp; Competitions</h2>
+      <div class="section-body">
+        <!-- Task 2.2: paste <article class="activity"> entries here -->
+      </div>
+    </section>
+
+    <section class="section" id="technical-projects" aria-labelledby="technical-projects-heading">
+      <h2 class="section-title" id="technical-projects-heading">Technical Projects</h2>
+      <div class="section-body">
+        <!-- Task 2.2: paste <article class="project"> entries here -->
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <!-- Task 2.2 / later: copyright + contact -->
+  </footer>
 </body>
 </html>
