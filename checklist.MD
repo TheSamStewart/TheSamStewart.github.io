@@ -8,7 +8,7 @@
 ## Phase 2: Structural HTML & Templating Classes
 
 - [x] Task 2.1: Write the main HTML skeleton structure. Define clean, reusable CSS utility classes for the template blocks (`project`, `project-main-text`, etc.) so the user can manually copy-paste to scale sections.
-- [ ] Task 2.2: Add HTML structure and styling for sections: "Professional Experience", "Education", "Extra Curricular/Competitions", and "Technical Projects" using semantic elements (`<section>`, `<article>`).
+- [x] Task 2.2: Add HTML structure and styling for sections: "Professional Experience", "Education", "Extra Curricular/Competitions", and "Technical Projects" using semantic elements (`<section>`, `<article>`).
 
 ## Phase 3: Interactive Features & UI Animation
 

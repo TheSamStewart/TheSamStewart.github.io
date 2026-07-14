@@ -184,6 +184,35 @@ img {
   margin-bottom: 0;
 }
 
+/* Bullet lists inside any -main-text block */
+.experience-main-text ul,
+.education-item-main-text ul,
+.activity-main-text ul,
+.project-main-text ul {
+  margin: 0;
+  padding-left: var(--space-lg);
+  list-style: disc;
+}
+
+.experience-main-text li,
+.education-item-main-text li,
+.activity-main-text li,
+.project-main-text li {
+  margin-bottom: var(--space-xs);
+}
+
+.experience-main-text li:last-child,
+.education-item-main-text li:last-child,
+.activity-main-text li:last-child,
+.project-main-text li:last-child {
+  margin-bottom: 0;
+}
+
+/* Visually separate adjacent sections */
+.section + .section {
+  border-top: var(--border-subtle);
+}
+
 /* ============================================================
    Footer
    ============================================================ */
