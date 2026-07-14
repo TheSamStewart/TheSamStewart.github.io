@@ -89,7 +89,9 @@ img {
 .hero {
   /* Scroll progress, driven by js/main.js. Stays 0 without JS. */
   --hero-progress: 0;
-  min-height: 100vh;
+  /* Fill the viewport remaining below the sticky nav bar, so the
+     landing view is exactly nav + hero (100vh without JS). */
+  min-height: calc(100vh - var(--nav-height, 0px));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -158,12 +160,20 @@ img {
 }
 
 /* ============================================================
-   Site navigation — Task 3.3
+   Site navigation — Tasks 3.3 / 3.4
    ------------------------------------------------------------
-   Sits directly below the full-viewport hero, so it is revealed
-   as the user scrolls and the hero shrinks away (user journey).
-   Everything lives under the single container class .site-nav —
-   Task 3.4 can hide the whole nav with one modifier on it.
+   Sticky top bar: present on the LANDING view (per the design
+   spec) and stays available while the hero shrinks away — the
+   hero content slides up BEHIND the bar (solid background +
+   z-index). js/main.js publishes the bar's height as --nav-height
+   so anchors can land below it (scroll-margin-top on .section).
+
+   .site-nav--hidden (toggled by js/main.js while any section is
+   open) slides/fades the bar away with transform + opacity only:
+   its in-flow sticky box never changes, so layout and anchor
+   positions stay stable mid-session. visibility + pointer-events
+   make the hidden bar non-interactive and remove it from the
+   tab order.
 
    Links use the shared card tokens (surface / border / radius /
    shadow) to match the section entry cards. Colour pairings all
@@ -172,14 +182,29 @@ img {
    ============================================================ */
 
 .site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   width: 100%;
-  max-width: var(--content-max);
-  margin: 0 auto;
-  padding: 0 var(--space-md) var(--space-lg);
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--color-bg);
+  border-bottom: var(--border-subtle);
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease,
+    visibility 0.3s;
+}
+
+.site-nav--hidden {
+  transform: translateY(-100%);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .site-nav-list {
-  margin: 0;
+  max-width: var(--content-max);
+  margin: 0 auto;
   padding: 0;
   list-style: none;
   display: flex;
@@ -219,24 +244,32 @@ img {
   outline-offset: 2px;
 }
 
-/* Keyboard focus indicator for section headings — js/main.js moves
-   focus to the target heading after a nav link is activated. */
+/* Keyboard focus indicator for section headings — fallback focus
+   target when a section has no toggle button (js/main.js prefers
+   focusing .section-toggle after a nav link is activated). */
 .section-title:focus-visible {
   outline: 3px solid var(--color-fourth);
   outline-offset: 4px;
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .site-nav,
   .site-nav-link {
     transition: none;
   }
 }
 
-/* Mobile: stack the links full-width for easy tapping */
+/* Mobile: compact 2x2 grid keeps the sticky bar short while
+   preserving >=44px tap targets */
 @media (max-width: 600px) {
   .site-nav-list {
-    flex-direction: column;
-    align-items: stretch;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .site-nav-link {
+    padding: var(--space-xs) var(--space-sm);
+    font-size: 0.9375rem;
   }
 }
 
@@ -253,6 +286,9 @@ img {
 
 .section {
   padding: var(--space-xl) 0;
+  /* Land anchor navigation below the sticky nav bar
+     (js/main.js publishes --nav-height; 0px without JS). */
+  scroll-margin-top: calc(var(--nav-height, 0px) + var(--space-xs));
 }
 
 .section-title {
@@ -265,6 +301,101 @@ img {
 .section-body {
   display: grid;
   gap: var(--space-lg);
+}
+
+/* ============================================================
+   Section accordion — Task 3.4
+   ------------------------------------------------------------
+   Collapsed state applies ONLY when js/main.js adds the
+   .section--collapsible class (and injects a .section-toggle
+   button into the heading). Without JS, no class is added and
+   every section renders fully expanded — content is never
+   trapped behind a control that cannot work.
+
+   Smooth auto-height animation uses the grid-template-rows
+   0fr -> 1fr trick: pure CSS, no measured heights, works for any
+   amount of copy-pasted template entries inside .section-body
+   (the templating contract needs no per-entry changes).
+   `visibility` transitions alongside so collapsed content leaves
+   the a11y tree / tab order when the close animation ends and is
+   restored immediately on open. Browsers that cannot animate
+   grid-template-rows fall back to an instant toggle.
+   ============================================================ */
+
+.section--collapsible {
+  display: grid;
+  grid-template-rows: min-content 0fr;
+  transition: grid-template-rows 0.35s ease;
+}
+
+.section--collapsible.section--open {
+  grid-template-rows: min-content 1fr;
+}
+
+.section--collapsible .section-body {
+  min-height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  transition: visibility 0.35s;
+}
+
+.section--collapsible.section--open .section-body {
+  visibility: visible;
+}
+
+/* Toggle button injected into <h2 class="section-title"> —
+   button-in-heading pattern. Inherits the heading's type styles
+   and spans the full width for a generous hit area. */
+.section-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  width: 100%;
+  min-height: 44px; /* comfortable tap target */
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* Chevron indicator: points down when collapsed, up when open */
+.section-toggle::after {
+  content: "";
+  flex: 0 0 auto;
+  width: 0.45em;
+  height: 0.45em;
+  margin-right: 0.2em;
+  border-right: 0.12em solid currentColor;
+  border-bottom: 0.12em solid currentColor;
+  transform: translateY(-25%) rotate(45deg);
+  transition: transform 0.35s ease;
+}
+
+.section-toggle[aria-expanded="true"]::after {
+  transform: translateY(25%) rotate(225deg);
+}
+
+.section-toggle:hover {
+  color: var(--color-fourth);
+}
+
+.section-toggle:focus-visible {
+  outline: 3px solid var(--color-fourth);
+  outline-offset: 4px;
+}
+
+/* Reduced motion: instant expand/collapse, no chevron spin */
+@media (prefers-reduced-motion: reduce) {
+  .section--collapsible,
+  .section--collapsible .section-body,
+  .section-toggle::after {
+    transition: none;
+  }
 }
 
 /* ============================================================

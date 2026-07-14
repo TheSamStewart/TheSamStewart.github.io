@@ -8,22 +8,10 @@
   <script src="js/main.js" defer></script>
 </head>
 <body>
-  <header class="hero" id="top">
-    <div class="hero-inner">
-      <h1 class="hero-name">Sam Stewart</h1>
-      <img
-        class="hero-image"
-        src="images/1781003854566.png"
-        alt="Portrait of Sam Stewart"
-        width="800"
-        height="800"
-        decoding="async">
-    </div>
-  </header>
-
-  <!-- Nav: revealed below the hero as it shrinks away (Task 3.3).
-       Single container class .site-nav so a later task (3.4) can hide
-       the whole nav with one modifier class when a section is engaged. -->
+  <!-- Nav: sticky top bar, present on the landing view per the design
+       spec (Tasks 3.3 / 3.4). Everything lives under the single
+       container class .site-nav — js/main.js toggles .site-nav--hidden
+       on it while any content section is open. -->
   <nav class="site-nav" aria-label="Section navigation">
     <ul class="site-nav-list">
       <li class="site-nav-item">
@@ -40,6 +28,19 @@
       </li>
     </ul>
   </nav>
+
+  <header class="hero" id="top">
+    <div class="hero-inner">
+      <h1 class="hero-name">Sam Stewart</h1>
+      <img
+        class="hero-image"
+        src="images/1781003854566.png"
+        alt="Portrait of Sam Stewart"
+        width="800"
+        height="800"
+        decoding="async">
+    </div>
+  </header>
 
   <main class="content">
     <!--
@@ -76,7 +77,7 @@
 
     <section class="section" id="professional-experience" aria-labelledby="professional-experience-heading">
       <h2 class="section-title" id="professional-experience-heading">Professional Experience</h2>
-      <div class="section-body">
+      <div class="section-body" id="professional-experience-body">
         <article class="experience">
           <h3 class="experience-title">[Job Title]</h3>
           <p class="experience-subtitle">[Company Name] · [Location]</p>
@@ -103,7 +104,7 @@
 
     <section class="section" id="education" aria-labelledby="education-heading">
       <h2 class="section-title" id="education-heading">Education</h2>
-      <div class="section-body">
+      <div class="section-body" id="education-body">
         <article class="education-item">
           <h3 class="education-item-title">[Degree / Qualification]</h3>
           <p class="education-item-subtitle">[Institution Name] · [Location]</p>
@@ -130,7 +131,7 @@
 
     <section class="section" id="extra-curricular" aria-labelledby="extra-curricular-heading">
       <h2 class="section-title" id="extra-curricular-heading">Extra Curricular &amp; Competitions</h2>
-      <div class="section-body">
+      <div class="section-body" id="extra-curricular-body">
         <article class="activity">
           <h3 class="activity-title">[Activity / Competition Name]</h3>
           <p class="activity-subtitle">[Organisation / Team] · [Role or Placement]</p>
@@ -156,7 +157,7 @@
 
     <section class="section" id="technical-projects" aria-labelledby="technical-projects-heading">
       <h2 class="section-title" id="technical-projects-heading">Technical Projects</h2>
-      <div class="section-body">
+      <div class="section-body" id="technical-projects-body">
         <article class="project">
           <h3 class="project-title">[Project Name]</h3>
           <p class="project-subtitle">[Tech Stack / Your Role]</p>

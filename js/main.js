@@ -116,24 +116,128 @@ const initHeroScrollEffect = () => {
 };
 
 /* ------------------------------------------------------------
-   Task 3.3 — Nav accessibility: focus management
+   Task 3.4 — Section accordion (expand / collapse)
    ------------------------------------------------------------
-   Scrolling itself is native: the nav links are plain in-page
-   anchors and css/style.css sets `html { scroll-behavior:smooth }`
-   (with a reduced-motion fallback), so no JS scrolling is needed.
+   Progressive enhancement: the static HTML renders every section
+   fully expanded. This module upgrades each .section by
+   - wrapping the heading text in a real <button class=
+     "section-toggle"> (button-in-heading pattern) carrying
+     aria-expanded + aria-controls -> the .section-body id,
+   - adding .section--collapsible, the class css/style.css keys
+     ALL collapsed styling on — so no-JS users always see every
+     section fully open and content is never trapped.
 
-   This enhancement only manages FOCUS: after a nav link is
-   activated, keyboard/screen-reader users should continue from
-   the target section, not from the nav. We move focus to the
-   section's heading with preventScroll so the native smooth
-   scroll is left untouched. Default anchor behaviour is never
-   prevented — the nav degrades gracefully without JS.
+   Animation is pure CSS (grid-template-rows 0fr -> 1fr) and
+   prefers-reduced-motion gets an instant toggle via CSS alone —
+   no motion branching needed here.
+
+   Per the design spec, the nav bar disappears while any section
+   is engaged: this module toggles .site-nav--hidden accordingly.
+
+   Templating contract: entries are copy-pasted inside
+   .section-body, which is never rewritten here — adding or
+   removing entries requires no accordion-related markup.
+
+   Returns a tiny API ({ open }) so the nav module can expand the
+   section a clicked link scrolls to. Returns null if there are
+   no sections to enhance.
    ------------------------------------------------------------ */
-const initNavFocusManagement = () => {
+const initSectionAccordion = () => {
+  const sections = Array.from(document.querySelectorAll('.section'));
+  const nav = document.querySelector('.site-nav');
+  if (sections.length === 0) {
+    return null;
+  }
+
+  const isOpen = (section) => section.classList.contains('section--open');
+
+  /* Hide the nav while any section is open; bring it back when all
+     are closed. Visual treatment lives in CSS (.site-nav--hidden). */
+  const updateNavVisibility = () => {
+    if (!nav) {
+      return;
+    }
+    nav.classList.toggle('site-nav--hidden', sections.some(isOpen));
+  };
+
+  const setOpen = (section, open) => {
+    if (open === isOpen(section)) {
+      return;
+    }
+    section.classList.toggle('section--open', open);
+    const toggle = section.querySelector('.section-toggle');
+    if (toggle) {
+      toggle.setAttribute('aria-expanded', String(open));
+    }
+    updateNavVisibility();
+  };
+
+  sections.forEach((section, index) => {
+    const title = section.querySelector('.section-title');
+    const body = section.querySelector('.section-body');
+    if (!title || !body) {
+      return; // Malformed section: leave it fully expanded.
+    }
+
+    if (!body.id) {
+      body.id = `${section.id || `section-${index}`}-body`;
+    }
+
+    // Button-in-heading: move the heading's text into a real button.
+    const toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'section-toggle';
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-controls', body.id);
+    while (title.firstChild) {
+      toggle.appendChild(title.firstChild);
+    }
+    title.appendChild(toggle);
+
+    toggle.addEventListener('click', () => {
+      setOpen(section, !isOpen(section));
+    });
+
+    // Collapse only now that the working toggle exists.
+    section.classList.add('section--collapsible');
+  });
+
+  return {
+    open: (section) => setOpen(section, true),
+  };
+};
+
+/* ------------------------------------------------------------
+   Tasks 3.3 / 3.4 — Site nav: sticky offset + scroll/focus hand-off
+   ------------------------------------------------------------
+   Scrolling itself stays native: the nav links are plain in-page
+   anchors and css/style.css sets `html { scroll-behavior:smooth }`
+   (with a reduced-motion fallback). This module adds:
+   - --nav-height on <html>: the sticky bar's measured height, so
+     CSS can land anchors below it (scroll-margin-top on .section);
+   - accordion hand-off: a clicked nav link expands its target
+     section, so the user never lands on a collapsed sliver;
+   - focus hand-off: focus moves to the section's toggle button
+     (preventScroll, so the native smooth scroll is untouched).
+   Default anchor behaviour is never prevented — without JS the
+   nav still scrolls to fully expanded sections.
+   ------------------------------------------------------------ */
+const initSiteNav = (accordion) => {
   const nav = document.querySelector('.site-nav');
   if (!nav) {
     return;
   }
+
+  /* visibility:hidden (the hidden-nav state) keeps layout, so this
+     measurement stays valid even while the bar is hidden. */
+  const publishNavHeight = () => {
+    document.documentElement.style.setProperty(
+      '--nav-height',
+      `${nav.offsetHeight}px`
+    );
+  };
+  publishNavHeight();
+  window.addEventListener('resize', publishNavHeight);
 
   nav.addEventListener('click', (event) => {
     const link = event.target.closest('a[href^="#"]');
@@ -147,18 +251,57 @@ const initNavFocusManagement = () => {
       return;
     }
 
-    // Prefer the section heading; fall back to the section itself.
-    const focusTarget = section.querySelector('.section-title') || section;
-    if (!focusTarget.hasAttribute('tabindex')) {
-      // Programmatically focusable only — stays out of the tab order.
+    // Land on an open section, not a collapsed sliver.
+    if (accordion) {
+      accordion.open(section);
+    }
+
+    // Focus hand-off: prefer the real toggle button, fall back to
+    // the heading (made programmatically focusable), then the section.
+    const focusTarget =
+      section.querySelector('.section-toggle') ||
+      section.querySelector('.section-title') ||
+      section;
+    if (
+      focusTarget.tagName !== 'BUTTON' &&
+      !focusTarget.hasAttribute('tabindex')
+    ) {
       focusTarget.setAttribute('tabindex', '-1');
     }
     focusTarget.focus({ preventScroll: true });
   });
 };
 
+/* ------------------------------------------------------------
+   Task 3.4 — Deep links land on OPEN sections
+   ------------------------------------------------------------
+   Covers page load with a #section-id hash and back/forward
+   (hashchange), which bypass the nav click handler.
+   ------------------------------------------------------------ */
+const openSectionForHash = (accordion) => {
+  if (!accordion || !window.location.hash) {
+    return;
+  }
+  let target = null;
+  try {
+    target = document.getElementById(
+      decodeURIComponent(window.location.hash.slice(1))
+    );
+  } catch {
+    return; // Malformed hash — nothing to open.
+  }
+  if (target && target.classList.contains('section--collapsible')) {
+    accordion.open(target);
+  }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
+  const accordion = initSectionAccordion();
+  // Nav first: it publishes --nav-height, which the hero's CSS
+  // min-height (and therefore the hero effect's fade distance)
+  // depends on — the hero must measure itself after that.
+  initSiteNav(accordion);
   initHeroScrollEffect();
-  initNavFocusManagement();
-  // Section expand/collapse interactivity is added in later tasks.
+  openSectionForHash(accordion);
+  window.addEventListener('hashchange', () => openSectionForHash(accordion));
 });
