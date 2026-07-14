@@ -4,5 +4,56 @@
    ============================================================ */
 
 :root {
-  /* CSS variables (colour palette, spacing, etc.) go here in Task 1.2 */
+  /* --- Colour palette (from CLAUDE.md design spec) --- */
+  --color-bg: #EEEEEE;          /* Background / main surface */
+  --color-secondary: #141E61;   /* Secondary — headings, accents */
+  --color-third: #787A91;       /* Third — muted text, borders */
+  --color-fourth: #0F044C;      /* Fourth — deep accent, primary text */
+
+  /* --- Semantic aliases --- */
+  --color-text: var(--color-fourth);
+  --color-text-muted: var(--color-third);
+  --color-accent: var(--color-secondary);
+
+  /* --- Typography --- */
+  --font-base: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+  --line-height-base: 1.6;
+}
+
+/* ============================================================
+   Base / Reset
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-base);
+  line-height: var(--line-height-base);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }

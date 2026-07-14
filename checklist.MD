@@ -3,7 +3,7 @@
 ## Phase 1: Core Skeleton & Architecture
 
 - [x] Task 1.1: Verify tech stack and create directory files (`index.html`, `css/style.css`, `js/main.js`) according to CLAUDE.md guidelines.
-- [ ] Task 1.2: Establish the color palette as CSS variables in `css/style.css`. Define the base styling.
+- [x] Task 1.2: Establish the color palette as CSS variables in `css/style.css`. Define the base styling.
 
 ## Phase 2: Structural HTML & Templating Classes
 
