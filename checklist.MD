@@ -2,7 +2,7 @@
 
 ## Progress Summary (as of 2026-07-14)
 
-**Completed: Phase 1, Phase 2, and Tasks 3.1–3.5** — 9 of 11 tasks done, each reviewed and committed individually.
+**Completed: ALL TASKS (Phases 1–4)** — 11 of 11 tasks done, each reviewed and committed individually.
 
 - **Task 1.1** (commit `a2e9e3e`): Scaffolded `index.html`, `css/style.css`, `js/main.js` per CLAUDE.md — semantic HTML5, relative paths, deferred script, no libraries.
 - **Task 1.2** (commit `86d7b45`): Palette as CSS variables in `:root` (`--color-bg` #EEEEEE, `--color-secondary` #141E61, `--color-third` #787A91, `--color-fourth` #0F044C) plus base reset, system font stack, smooth scroll with reduced-motion fallback. QA advisory: #787A91 is only ~3.7:1 contrast on the background — use for large text/borders only.
@@ -18,7 +18,9 @@
 
 - **Task 3.5** (this commit): Design research + implementation. Research Agent (Opus, deep-research config) produced `design-research.md` — 13 priority-tagged instructions from 2025/26 trend research, all cross-checked for the vanilla/no-external-resource constraints. ALL 13 implemented: head metadata (description, OG/Twitter cards, theme-color, inline-SVG data-URI favicon); motion/focus/measure/radius/spacing tokens; two-layer card shadows + hover lift (gated `hover:hover` + reduced-motion); fluid rem-based `clamp()` type scale; `text-wrap: balance/pretty`; 68ch reading measure; `::selection`; hero tagline + single CTA (11.6:1 contrast); populated footer (mailto, placeholder LinkedIn/GitHub, auto-year JS, back-to-top); unified focus-ring token; pure-CSS scroll-reveal (`animation-timeline: view()` behind `@supports` + reduced-motion); scrollbar tint. Both 3.4 QA advisories applied (4.5rem `scroll-margin-top` no-JS fallback; deterministic `scrollIntoView` on load-time hash). Anchor handling unified into one delegated listener covering nav links, hero CTA and back-to-top. Verified: `node --check` passes, CSS braces balanced, templating contract untouched. NOTE for owner: replace `[LinkedIn]`/`[GitHub]` placeholder links, the bracketed hero tagline, and confirm the canonical/OG base URL.
 
-**Remaining:** Tasks 4.1–4.2 (responsiveness and accessibility audits).
+- **Tasks 4.1 + 4.2** (this commit): Final audits. **4.1 Responsiveness:** breakpoints verified (≤600px hero stack + 2×2 nav grid, ≥700px section spacing, fluid rem-based clamp() type in between, no fixed-width elements, all transforms vertical → no horizontal overflow at 320px); fix applied: hero now uses `100dvh` (with `100vh` fallback) so mobile URL-bar collapse no longer jumps the layout. **4.2 Accessibility/semantics/paths:** landmarks (nav/header/main/footer), h1→h2→h3 order, aria-labelledby sections, aria-expanded/aria-controls accordion wiring, alt text, lang, visible focus rings via single token, reduced-motion coverage on every animation, full no-JS fallback, all contrast pairs AA+; all asset paths relative and verified on disk (`images/1781003854566.png` exists; OG/canonical absolute URLs are intentional metadata); fix applied: footer text links padded past the WCAG 2.5.8 24px minimum target size. `node --check` and CSS brace balance pass.
+
+**Owner TODOs (content, not code):** replace `[LinkedIn]`/`[GitHub]` placeholder hrefs, the bracketed hero tagline and section placeholder entries; confirm `https://thesamstewart.github.io/` as the canonical/OG base URL.
 
 **Process:** Builder agent implements each task, QA agent reviews against CLAUDE.md and issues a verdict; fixes are applied and re-verified before the task is checked off and committed.
 
@@ -42,5 +44,5 @@
 
 ## Phase 4: Quality Assurance & Deployment Prep
 
-- [ ] Task 4.1: Audit responsiveness across mobile and desktop breakpoints.
-- [ ] Task 4.2: Audit accessibility tags, semantic structure, and relative path compliance.
+- [x] Task 4.1: Audit responsiveness across mobile and desktop breakpoints.
+- [x] Task 4.2: Audit accessibility tags, semantic structure, and relative path compliance.

@@ -123,6 +123,10 @@ img {
   /* Fill the viewport remaining below the sticky nav bar, so the
      landing view is exactly nav + hero (100vh without JS). */
   min-height: calc(100vh - var(--nav-height, 0px));
+  /* Dynamic viewport unit where supported: tracks the real visible
+     height on mobile as the browser URL bar collapses/expands,
+     avoiding the classic 100vh jump. */
+  min-height: calc(100dvh - var(--nav-height, 0px));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -711,6 +715,10 @@ img {
 
 .footer-links a,
 .footer-top {
+  /* Comfortable tap target (WCAG 2.5.8): padding lifts these small
+     text links well past the 24px minimum without changing layout */
+  display: inline-block;
+  padding: var(--space-xs) var(--space-xs);
   color: var(--color-secondary);
   font-weight: 600;
   text-decoration: none;
