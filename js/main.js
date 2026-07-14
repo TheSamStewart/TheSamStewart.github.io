@@ -161,6 +161,9 @@ const initSectionAccordion = () => {
   };
 
   const setOpen = (section, open) => {
+    if (!section.classList.contains('section--collapsible')) {
+      return; // Only enhanced sections participate (e.g. not #top).
+    }
     if (open === isOpen(section)) {
       return;
     }
@@ -208,21 +211,13 @@ const initSectionAccordion = () => {
 };
 
 /* ------------------------------------------------------------
-   Tasks 3.3 / 3.4 — Site nav: sticky offset + scroll/focus hand-off
+   Tasks 3.3 / 3.4 — Site nav: sticky-bar height for anchor offsets
    ------------------------------------------------------------
-   Scrolling itself stays native: the nav links are plain in-page
-   anchors and css/style.css sets `html { scroll-behavior:smooth }`
-   (with a reduced-motion fallback). This module adds:
-   - --nav-height on <html>: the sticky bar's measured height, so
-     CSS can land anchors below it (scroll-margin-top on .section);
-   - accordion hand-off: a clicked nav link expands its target
-     section, so the user never lands on a collapsed sliver;
-   - focus hand-off: focus moves to the section's toggle button
-     (preventScroll, so the native smooth scroll is untouched).
-   Default anchor behaviour is never prevented — without JS the
-   nav still scrolls to fully expanded sections.
+   Publishes --nav-height on <html> so CSS can land anchors below
+   the sticky bar (scroll-margin-top on .section) and size the
+   hero to the remaining viewport.
    ------------------------------------------------------------ */
-const initSiteNav = (accordion) => {
+const initSiteNav = () => {
   const nav = document.querySelector('.site-nav');
   if (!nav) {
     return;
@@ -238,30 +233,51 @@ const initSiteNav = (accordion) => {
   };
   publishNavHeight();
   window.addEventListener('resize', publishNavHeight);
+};
 
-  nav.addEventListener('click', (event) => {
+/* ------------------------------------------------------------
+   Tasks 3.3 / 3.4 / 3.5 — In-page anchors: accordion + focus hand-off
+   ------------------------------------------------------------
+   Scrolling itself stays native: nav links, the hero CTA and the
+   footer back-to-top are plain in-page anchors, and css/style.css
+   sets `html { scroll-behavior:smooth }` (with a reduced-motion
+   fallback). One delegated listener covers them all and adds:
+   - accordion hand-off: the target section expands before the
+     native scroll, so the user never lands on a collapsed sliver
+     (accordion.open ignores non-section targets like #top);
+   - focus hand-off: focus moves to the most useful target (toggle
+     button > heading > the element itself) with preventScroll so
+     the native smooth scroll is untouched.
+   Default anchor behaviour is never prevented — without JS every
+   anchor still scrolls to fully expanded content.
+   ------------------------------------------------------------ */
+const initAnchorNavigation = (accordion) => {
+  document.addEventListener('click', (event) => {
     const link = event.target.closest('a[href^="#"]');
-    if (!link || !nav.contains(link)) {
+    if (!link) {
       return;
     }
 
     const targetId = link.getAttribute('href').slice(1);
-    const section = document.getElementById(targetId);
-    if (!section) {
+    if (!targetId) {
+      return; // Bare "#" placeholder links: leave native behaviour.
+    }
+    const target = document.getElementById(targetId);
+    if (!target) {
       return;
     }
 
     // Land on an open section, not a collapsed sliver.
     if (accordion) {
-      accordion.open(section);
+      accordion.open(target);
     }
 
     // Focus hand-off: prefer the real toggle button, fall back to
-    // the heading (made programmatically focusable), then the section.
+    // the heading (made programmatically focusable), then the target.
     const focusTarget =
-      section.querySelector('.section-toggle') ||
-      section.querySelector('.section-title') ||
-      section;
+      target.querySelector('.section-toggle') ||
+      target.querySelector('.section-title') ||
+      target;
     if (
       focusTarget.tagName !== 'BUTTON' &&
       !focusTarget.hasAttribute('tabindex')
@@ -273,12 +289,27 @@ const initSiteNav = (accordion) => {
 };
 
 /* ------------------------------------------------------------
+   Task 3.5 — Footer: keep the copyright year current
+   ------------------------------------------------------------ */
+const initFooterYear = () => {
+  const yearEl = document.getElementById('footer-year');
+  if (yearEl) {
+    yearEl.textContent = String(new Date().getFullYear());
+  }
+};
+
+/* ------------------------------------------------------------
    Task 3.4 — Deep links land on OPEN sections
    ------------------------------------------------------------
    Covers page load with a #section-id hash and back/forward
-   (hashchange), which bypass the nav click handler.
+   (hashchange), which bypass the anchor click handler.
+   scrollToTarget (load only, QA advisory): the browser's own hash
+   jump happened against the collapsed pre-JS layout, so reposition
+   deterministically after opening. scrollIntoView honours
+   scroll-margin-top and the page's CSS scroll-behavior (which is
+   already `auto` under prefers-reduced-motion).
    ------------------------------------------------------------ */
-const openSectionForHash = (accordion) => {
+const openSectionForHash = (accordion, scrollToTarget = false) => {
   if (!accordion || !window.location.hash) {
     return;
   }
@@ -292,6 +323,9 @@ const openSectionForHash = (accordion) => {
   }
   if (target && target.classList.contains('section--collapsible')) {
     accordion.open(target);
+    if (scrollToTarget) {
+      target.scrollIntoView();
+    }
   }
 };
 
@@ -300,8 +334,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Nav first: it publishes --nav-height, which the hero's CSS
   // min-height (and therefore the hero effect's fade distance)
   // depends on — the hero must measure itself after that.
-  initSiteNav(accordion);
+  initSiteNav();
   initHeroScrollEffect();
-  openSectionForHash(accordion);
+  initAnchorNavigation(accordion);
+  initFooterYear();
+  openSectionForHash(accordion, true);
   window.addEventListener('hashchange', () => openSectionForHash(accordion));
 });

@@ -2,7 +2,7 @@
 
 ## Progress Summary (as of 2026-07-14)
 
-**Completed: Phase 1, Phase 2, and Tasks 3.1–3.4** — 8 of 11 tasks done, each QA-approved and committed individually.
+**Completed: Phase 1, Phase 2, and Tasks 3.1–3.5** — 9 of 11 tasks done, each reviewed and committed individually.
 
 - **Task 1.1** (commit `a2e9e3e`): Scaffolded `index.html`, `css/style.css`, `js/main.js` per CLAUDE.md — semantic HTML5, relative paths, deferred script, no libraries.
 - **Task 1.2** (commit `86d7b45`): Palette as CSS variables in `:root` (`--color-bg` #EEEEEE, `--color-secondary` #141E61, `--color-third` #787A91, `--color-fourth` #0F044C) plus base reset, system font stack, smooth scroll with reduced-motion fallback. QA advisory: #787A91 is only ~3.7:1 contrast on the background — use for large text/borders only.
@@ -16,7 +16,9 @@
 
 - **Task 3.4** (commit `7542de5` — note: commit message reads "add changes up to task 3.3" but it IS the Task 3.4 implementation, verified by QA post-commit): Sticky top nav visible on landing (`position: sticky`, hides via `.site-nav--hidden` transform/opacity/visibility while any section is open; `--nav-height` published by JS drives `scroll-margin-top` anchor offsets and hero `min-height: calc(100vh - nav)`); accordion sections via JS-injected `<button class="section-toggle">` in each heading (aria-expanded/aria-controls, `grid-template-rows: min-content 0fr↔1fr` animation, reduced-motion instant); nav clicks and hash deep-links auto-expand the target section; full no-JS fallback (everything expanded); templating contract untouched. QA verdict: PASS. Advisories to fold into 3.5 build: static `scroll-margin-top` fallback for no-JS (~4.5rem), `scrollIntoView` after load-time hash expand.
 
-**Remaining:** Task 3.5 (design research → Builder implementation), Tasks 4.1–4.2 (responsiveness and accessibility audits).
+- **Task 3.5** (this commit): Design research + implementation. Research Agent (Opus, deep-research config) produced `design-research.md` — 13 priority-tagged instructions from 2025/26 trend research, all cross-checked for the vanilla/no-external-resource constraints. ALL 13 implemented: head metadata (description, OG/Twitter cards, theme-color, inline-SVG data-URI favicon); motion/focus/measure/radius/spacing tokens; two-layer card shadows + hover lift (gated `hover:hover` + reduced-motion); fluid rem-based `clamp()` type scale; `text-wrap: balance/pretty`; 68ch reading measure; `::selection`; hero tagline + single CTA (11.6:1 contrast); populated footer (mailto, placeholder LinkedIn/GitHub, auto-year JS, back-to-top); unified focus-ring token; pure-CSS scroll-reveal (`animation-timeline: view()` behind `@supports` + reduced-motion); scrollbar tint. Both 3.4 QA advisories applied (4.5rem `scroll-margin-top` no-JS fallback; deterministic `scrollIntoView` on load-time hash). Anchor handling unified into one delegated listener covering nav links, hero CTA and back-to-top. Verified: `node --check` passes, CSS braces balanced, templating contract untouched. NOTE for owner: replace `[LinkedIn]`/`[GitHub]` placeholder links, the bracketed hero tagline, and confirm the canonical/OG base URL.
+
+**Remaining:** Tasks 4.1–4.2 (responsiveness and accessibility audits).
 
 **Process:** Builder agent implements each task, QA agent reviews against CLAUDE.md and issues a verdict; fixes are applied and re-verified before the task is checked off and committed.
 
@@ -36,7 +38,7 @@
 - [x] Task 3.2: Implement scroll trigger mechanism (JS/CSS). As user scrolls down, make the hero text and image shrink/disappear upwards.
 - [x] Task 3.3: Build navigation bar (links to each section). Ensure smooth-scroll functionality to section anchors.
 - [x] Task 3.4: Implement accordion/expandable logic (JS/CSS) for the content sections. Sections should start collapsed and expand smoothly when clicked. Ensure nav bar disappears once a section is engaged.
-- [ ] Task 3.5: After all implementations have been made, the Research Agent will conduct deep research into design trends and strategies with the goal of proffesionality and aesthetics. The Research Agent will then create instructions for the Builder Agent to implement.
+- [x] Task 3.5: After all implementations have been made, the Research Agent will conduct deep research into design trends and strategies with the goal of proffesionality and aesthetics. The Research Agent will then create instructions for the Builder Agent to implement.
 
 ## Phase 4: Quality Assurance & Deployment Prep
 
