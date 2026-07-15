@@ -308,16 +308,19 @@ img {
   pointer-events: none;
 }
 
-/* Task 5.1: equal grid columns instead of wrapping flex items —
-   the four links share the bar width evenly and never wrap into a
-   ragged second row (long labels wrap INSIDE their own link). */
+/* Tasks 5.1 / 5.8: grid columns instead of wrapping flex items —
+   the four links share the bar width and never wrap into a ragged
+   second row. min-content column floors (paired with white-space:
+   nowrap on the links) guarantee every label stays on ONE line;
+   the breakpoints below drop the column count before the longest
+   label could overflow its track. */
 .site-nav-list {
   max-width: var(--content-max);
   margin: 0 auto;
   padding: 0;
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(min-content, 1fr));
   gap: var(--space-sm);
 }
 
@@ -332,9 +335,11 @@ img {
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-card);
   color: var(--color-secondary);
+  font-size: 1rem; /* fixed UI size (not fluid body size) so labels fit one row */
   font-weight: 600;
   text-align: center;
   text-decoration: none;
+  white-space: nowrap; /* Task 5.8: a label must never break onto two lines */
   transition:
     background-color 0.15s ease,
     border-color 0.15s ease,
@@ -367,11 +372,11 @@ img {
   }
 }
 
-/* Mid widths: four columns get too narrow for the longest labels,
-   so drop to an (equally-spaced) 2x2 grid before that happens */
-@media (max-width: 820px) {
+/* Mid widths: one row can no longer hold all four non-wrapping
+   labels, so drop to a 2x2 grid before any label would overflow */
+@media (max-width: 860px) {
   .site-nav-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(min-content, 1fr));
   }
 }
 
@@ -380,6 +385,15 @@ img {
 @media (max-width: 600px) {
   .site-nav-link {
     font-size: 0.9375rem;
+  }
+}
+
+/* Narrow phones: even two content-sized columns can't fit the
+   longest label side by side, so stack the links full width —
+   every label still sits on a single line (Task 5.8) */
+@media (max-width: 500px) {
+  .site-nav-list {
+    grid-template-columns: minmax(min-content, 1fr);
   }
 }
 
