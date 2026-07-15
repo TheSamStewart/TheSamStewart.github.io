@@ -22,6 +22,8 @@
 
 - **Final independent QA (post-commit `1bfdb44`): PASS.** QA agent re-reviewed the full site at HEAD against CLAUDE.md — `node --check` passes, CSS braces balanced (92/92), image path verified on disk, no external runtime resources, templating contract intact, user journey and accordion/nav-hide logic sound, accessibility wiring complete. No blockers; 5 advisories, all either owner-content placeholders (bracketed tagline, `href="#"` LinkedIn/GitHub links) or documented judgment calls/micro-nits (`--color-surface` as a fifth surface color, nav hidden on section-engage per Lead decision, permanent `will-change` on `.hero-inner`). Site is deployment-ready pending owner content.
 
+- **Phase 5** (this commit — Builder + QA roles handled directly, no sub-agents): **5.1** nav links switched from wrapping flex to an equal-width grid (4 columns desktop, 2×2 ≤820px, smaller type ≤600px) so the bar never wraps into a ragged second row. **5.2 + 5.4** hero CTA relabelled "Down ↓" and both it and the footer back-to-top now target a new `#content-top` anchor on `<main>` (with `scroll-margin-top` under the sticky nav) — the landing position where the hero has fully faded and Professional Experience sits at the top, WITHOUT auto-expanding the section (linking straight to `#professional-experience` would have triggered the accordion open + nav hide). **5.3** © line removed (HTML `.footer-copy`, its CSS rule, and the auto-year JS). **5.5 (partial)** LinkedIn/GitHub links now real (`linkedin.com/in/TheSamStewart`, `github.com/TheSamStewart`); canonical `https://thesamstewart.github.io/` confirmed consistent with the GitHub username. Hero tagline + section entries remain bracketed — they need Sam's real content, which cannot be invented. **5.6** display proportions trimmed ~10–12% (hero name `clamp(2.25rem,7vw,3.75rem)`, portrait `clamp(130px,28vw,280px)`, section/card title scale reduced); body/meta type untouched for readability. **5.7** design-research.md re-audited — all 13 instructions verified present (the © line is an intentional deviation per 5.3); palette refined for professionalism while staying close: bg `#EEEEEE → #EEF0F5` (cool off-white tied to the navy hue), third `#787A91 → #6B6E8C` (crisper borders, ~3.7:1 → ~4.3:1 on bg); both navys and white cards unchanged; all contrast pairs re-checked AA+; CLAUDE.md palette updated to match. QA: `node --check` passes, CSS braces balanced (92/92), no stale references, anchor/accordion/no-JS behaviour re-verified.
+
 **Process:** Builder agent implements each task, QA agent reviews against CLAUDE.md and issues a verdict; fixes are applied and re-verified before the task is checked off and committed.
 
 ## Phase 1: Core Skeleton & Architecture
@@ -49,10 +51,10 @@
 
 ## Phase 5: Changes After Human Check
 
-- [] Task 5.1: Ensure all header items are spaced evenly, they are currently wrapping.
-- [] Task 5.2: Ensure when back to top button is pressed that it lands so that the Face and title are not in view (end of the scroll animation where Professional experience is at top of page)
-- [] Task 5.3: Remove © 2026 Sam Stewart from footer
-- [] Task 5.4: Change view my experience button to "Down" with a downward arrow, make it so lands at the same position as back to top.
-- [] Task 5.5: replace `[LinkedIn]`/`[GitHub]` placeholder hrefs with TheSamStewart as username of both LinkedIn and Github, the bracketed hero tagline and section placeholder entries; confirm `https://thesamstewart.github.io/` as the canonical/OG base URL.
-- [] Task 5.6: Make proportions of slightly smaller
-- [] Task 5.7: Ensure the design-research.md has been implemented correctly - pick a colour scheme that is close to the current but pick for optimal proffesionality.
+- [x] Task 5.1: Ensure all header items are spaced evenly, they are currently wrapping.
+- [x] Task 5.2: Ensure when back to top button is pressed that it lands so that the Face and title are not in view (end of the scroll animation where Professional experience is at top of page)
+- [x] Task 5.3: Remove © 2026 Sam Stewart from footer
+- [x] Task 5.4: Change view my experience button to "Down" with a downward arrow, make it so lands at the same position as back to top.
+- [ ] Task 5.5 (partial — links + URL done): replace `[LinkedIn]`/`[GitHub]` placeholder hrefs with TheSamStewart as username of both LinkedIn and Github ✓, confirm `https://thesamstewart.github.io/` as the canonical/OG base URL ✓. REMAINING (owner content): the bracketed hero tagline and section placeholder entries need Sam's real information.
+- [x] Task 5.6: Make proportions of slightly smaller
+- [x] Task 5.7: Ensure the design-research.md has been implemented correctly - pick a colour scheme that is close to the current but pick for optimal proffesionality.

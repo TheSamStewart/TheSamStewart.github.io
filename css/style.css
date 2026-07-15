@@ -4,10 +4,12 @@
    ============================================================ */
 
 :root {
-  /* --- Colour palette (from CLAUDE.md design spec) --- */
-  --color-bg: #EEEEEE;          /* Background / main surface */
+  /* --- Colour palette (CLAUDE.md design spec, refined in Task 5.7:
+         background cooled toward the navy hue and the slate deepened
+         for crisper borders — both within a hair of the originals) --- */
+  --color-bg: #EEF0F5;          /* Background / main surface (was #EEEEEE) */
   --color-secondary: #141E61;   /* Secondary — headings, accents */
-  --color-third: #787A91;       /* Third — muted text, borders */
+  --color-third: #6B6E8C;       /* Third — muted text, borders (was #787A91) */
   --color-fourth: #0F044C;      /* Fourth — deep accent, primary text */
   --color-surface: #FFFFFF;     /* Card / raised surface */
 
@@ -22,7 +24,7 @@
   --line-height-base: 1.6;
 
   /* --- Muted text that passes contrast on --color-bg (QA advisory) ---
-     #787A91 on #EEEEEE is only ~3.7:1, so normal-size muted text uses the
+     #6B6E8C on #EEF0F5 is only ~4.3:1, so normal-size muted text uses the
      secondary navy instead; --color-text-muted stays for large/bold text only. */
   --color-muted-accessible: var(--color-secondary);
 
@@ -46,10 +48,12 @@
 
   /* --- Fluid type scale (rem-based with a small vw term only,
          so browser zoom / user font-size scaling keeps working) --- */
+  /* Task 5.6: display sizes trimmed ~10% for tighter proportions;
+     body/meta sizes untouched for readability. */
   --text-meta: clamp(0.8rem, 0.77rem + 0.12vw, 0.875rem);
   --text-body: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
-  --text-card-title: clamp(1.1rem, 1.02rem + 0.4vw, 1.375rem);
-  --text-section: clamp(1.5rem, 1.24rem + 1.2vw, 2rem);
+  --text-card-title: clamp(1.05rem, 0.99rem + 0.3vw, 1.25rem);
+  --text-section: clamp(1.35rem, 1.15rem + 1vw, 1.75rem);
 
   /* --- Motion --- */
   --dur-fast: 150ms;
@@ -177,7 +181,8 @@ img {
 .hero-name {
   margin: 0;
   color: var(--color-secondary);
-  font-size: clamp(2.5rem, 8vw, 4.5rem);
+  /* Task 5.6: proportions trimmed ~10-15% from clamp(2.5rem, 8vw, 4.5rem) */
+  font-size: clamp(2.25rem, 7vw, 3.75rem);
   line-height: 1.05;
   letter-spacing: -0.01em;
 }
@@ -190,7 +195,7 @@ img {
   line-height: 1.4;
 }
 
-/* Single focused CTA. Contrast: #EEEEEE on #141E61 ~ 11.6:1 (AA),
+/* Single focused CTA. Contrast: #EEF0F5 on #141E61 ~ 11.7:1 (AA),
    higher still on the #0F044C hover state. */
 .hero-cta {
   display: inline-flex;
@@ -235,7 +240,8 @@ img {
 
 .hero-image {
   flex: 0 0 auto;
-  width: clamp(140px, 32vw, 320px);
+  /* Task 5.6: portrait trimmed ~12% from clamp(140px, 32vw, 320px) */
+  width: clamp(130px, 28vw, 280px);
   height: auto;
   aspect-ratio: 1 / 1;
   border-radius: 50%;
@@ -278,7 +284,7 @@ img {
    Links use the shared card tokens (surface / border / radius /
    shadow) to match the section entry cards. Colour pairings all
    pass WCAG AA at normal size:
-     #141E61 on #FFFFFF ≈ 13.4:1, #EEEEEE on #141E61 ≈ 11.6:1.
+     #141E61 on #FFFFFF ≈ 13.4:1, #EEF0F5 on #141E61 ≈ 11.7:1.
    ============================================================ */
 
 .site-nav {
@@ -302,14 +308,16 @@ img {
   pointer-events: none;
 }
 
+/* Task 5.1: equal grid columns instead of wrapping flex items —
+   the four links share the bar width evenly and never wrap into a
+   ragged second row (long labels wrap INSIDE their own link). */
 .site-nav-list {
   max-width: var(--content-max);
   margin: 0 auto;
   padding: 0;
   list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--space-sm);
 }
 
@@ -318,7 +326,7 @@ img {
   align-items: center;
   justify-content: center;
   min-height: 44px; /* comfortable tap target on touch devices */
-  padding: var(--space-xs) var(--space-lg);
+  padding: var(--space-xs) var(--space-sm);
   background-color: var(--color-surface);
   border: var(--border-subtle);
   border-radius: var(--radius-card);
@@ -359,16 +367,18 @@ img {
   }
 }
 
-/* Mobile: compact 2x2 grid keeps the sticky bar short while
-   preserving >=44px tap targets */
-@media (max-width: 600px) {
+/* Mid widths: four columns get too narrow for the longest labels,
+   so drop to an (equally-spaced) 2x2 grid before that happens */
+@media (max-width: 820px) {
   .site-nav-list {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+}
 
+/* Mobile: slightly smaller type keeps the 2x2 sticky bar short
+   while preserving >=44px tap targets */
+@media (max-width: 600px) {
   .site-nav-link {
-    padding: var(--space-xs) var(--space-sm);
     font-size: 0.9375rem;
   }
 }
@@ -382,6 +392,10 @@ img {
   max-width: var(--content-max);
   margin: 0 auto;
   padding: 0 var(--space-md);
+  /* Tasks 5.2 / 5.4: #content-top is the shared landing anchor for the
+     hero "Down" CTA and the footer back-to-top — the hero has fully
+     faded here and the sections overview sits just below the nav. */
+  scroll-margin-top: calc(var(--nav-height, 4.5rem) + var(--space-xs));
 }
 
 .section {
@@ -738,10 +752,6 @@ img {
 .footer-top:focus-visible {
   outline: var(--focus-ring);
   outline-offset: var(--focus-offset);
-}
-
-.footer-copy {
-  margin: 0 0 var(--space-sm);
 }
 
 .footer-top {

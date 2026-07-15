@@ -55,7 +55,10 @@
       <div class="hero-text">
         <h1 class="hero-name">Sam Stewart</h1>
         <p class="hero-tagline">[Your role — e.g. "Software Engineer building reliable, well-crafted web apps."]</p>
-        <a class="hero-cta" href="#professional-experience">View my experience</a>
+        <!-- Tasks 5.2 / 5.4: CTA and footer back-to-top share the same
+             landing position — #content-top, the sections overview just
+             past the hero (face + title scrolled out of view). -->
+        <a class="hero-cta" href="#content-top">Down <span aria-hidden="true">&darr;</span></a>
       </div>
       <img
         class="hero-image"
@@ -67,7 +70,7 @@
     </div>
   </header>
 
-  <main class="content">
+  <main class="content" id="content-top">
     <!--
       ============================================================
       TEMPLATE CONTRACT — copy/paste to add an entry to any section
@@ -211,13 +214,10 @@
   <footer class="site-footer">
     <ul class="footer-links" aria-label="Contact">
       <li><a href="mailto:samstew367@gmail.com">samstew367@gmail.com</a></li>
-      <!-- Placeholder profile links: replace href="#" with your real
-           LinkedIn / GitHub URLs and drop the [brackets] -->
-      <li><a href="#" rel="me noopener">[LinkedIn]</a></li>
-      <li><a href="#" rel="me noopener">[GitHub]</a></li>
+      <li><a href="https://www.linkedin.com/in/TheSamStewart" rel="me noopener">LinkedIn</a></li>
+      <li><a href="https://github.com/TheSamStewart" rel="me noopener">GitHub</a></li>
     </ul>
-    <p class="footer-copy">&copy; <span id="footer-year">2026</span> Sam Stewart</p>
-    <a class="footer-top" href="#top">Back to top &uarr;</a>
+    <a class="footer-top" href="#content-top">Back to top &uarr;</a>
   </footer>
 </body>
 </html>

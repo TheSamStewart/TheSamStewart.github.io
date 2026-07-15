@@ -289,16 +289,6 @@ const initAnchorNavigation = (accordion) => {
 };
 
 /* ------------------------------------------------------------
-   Task 3.5 — Footer: keep the copyright year current
-   ------------------------------------------------------------ */
-const initFooterYear = () => {
-  const yearEl = document.getElementById('footer-year');
-  if (yearEl) {
-    yearEl.textContent = String(new Date().getFullYear());
-  }
-};
-
-/* ------------------------------------------------------------
    Task 3.4 — Deep links land on OPEN sections
    ------------------------------------------------------------
    Covers page load with a #section-id hash and back/forward
@@ -337,7 +327,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initSiteNav();
   initHeroScrollEffect();
   initAnchorNavigation(accordion);
-  initFooterYear();
   openSectionForHash(accordion, true);
   window.addEventListener('hashchange', () => openSectionForHash(accordion));
 });

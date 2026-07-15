@@ -20,7 +20,7 @@ This is the source of truth for the Portfolio Website
 
 ## Design Specification
 
-- **Colour Palette**: Background/Main: #EEEEEE Secondary: #141E61 Third: #787A91 Fourth: #0F044C
+- **Colour Palette**: Background/Main: #EEF0F5 Secondary: #141E61 Third: #6B6E8C Fourth: #0F044C (refined in Task 5.7 from #EEEEEE / #787A91 — background cooled toward the navy hue, slate deepened for crisper borders and better contrast)
 - **Design Overview**: This website functions as an extremely functional and proffesional portfolio. The website will feature one main page which allows the user to expand the information they wish to see, keeping the website minimalistic and proffesional. The website is being created as a skeleton in which i can input my own personal information.
 - **User Journey**: 1. The user lands at a page with my name "Sam Stewart" and to the right of this image: 1781003854566.png is displayed. This page also includes a nav bar which allows for clicking to each section (discussed in 2.) 2. the user scrolls downward and the image and name get smaller and dissapear upwards as user scrolls. This reveals a collection of clickable sections which take the user to the desired section (nav bar dissapears). When section is clicked the section opens and reveals the relevant information to the user.
 - **Sections**: List of sections to be included: Proffesional Experience - created with templating so i can add and remove experience, Education - created with templating to allow manually editing, Extra Curricular/Competitions created with templating, Technical Projects created with templating.
