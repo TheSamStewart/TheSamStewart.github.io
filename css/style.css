@@ -200,6 +200,9 @@ img {
 .hero-cta {
   display: inline-flex;
   align-items: center;
+  /* Task 5.10: flex layout drops the literal space between the
+     "Down" text node and the arrow span, so gap restores it */
+  gap: 0.5em;
   min-height: 44px; /* tap target */
   margin-top: var(--space-xs);
   padding: 0.7rem 1.5rem;
@@ -372,8 +375,10 @@ img {
   }
 }
 
-/* Mid widths: one row can no longer hold all four non-wrapping
-   labels, so drop to a 2x2 grid before any label would overflow */
+/* Mid widths (620–860px): one row can no longer hold all four
+   non-wrapping labels, so drop to a 2x2 grid. In this range the
+   equal 1fr share always exceeds the longest label's min-content
+   floor, so both columns render the same width (uniform grid). */
 @media (max-width: 860px) {
   .site-nav-list {
     grid-template-columns: repeat(2, minmax(min-content, 1fr));
@@ -388,12 +393,16 @@ img {
   }
 }
 
-/* Narrow phones: even two content-sized columns can't fit the
-   longest label side by side, so stack the links full width —
-   every label still sits on a single line (Task 5.8) */
-@media (max-width: 500px) {
+/* Phones (Task 5.9): below ~620px the 2x2 tier can't give both
+   columns an equal share (the longest label forces its column
+   wider), which reads as a lopsided grid. Stack the links full
+   width instead — four identical single-line rows — with a
+   tighter gap so the sticky bar stays short (44px tap targets
+   preserved). */
+@media (max-width: 620px) {
   .site-nav-list {
     grid-template-columns: minmax(min-content, 1fr);
+    gap: var(--space-xs);
   }
 }
 
