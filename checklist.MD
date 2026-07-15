@@ -22,8 +22,6 @@
 
 - **Final independent QA (post-commit `1bfdb44`): PASS.** QA agent re-reviewed the full site at HEAD against CLAUDE.md — `node --check` passes, CSS braces balanced (92/92), image path verified on disk, no external runtime resources, templating contract intact, user journey and accordion/nav-hide logic sound, accessibility wiring complete. No blockers; 5 advisories, all either owner-content placeholders (bracketed tagline, `href="#"` LinkedIn/GitHub links) or documented judgment calls/micro-nits (`--color-surface` as a fifth surface color, nav hidden on section-engage per Lead decision, permanent `will-change` on `.hero-inner`). Site is deployment-ready pending owner content.
 
-**Owner TODOs (content, not code):** replace `[LinkedIn]`/`[GitHub]` placeholder hrefs, the bracketed hero tagline and section placeholder entries; confirm `https://thesamstewart.github.io/` as the canonical/OG base URL.
-
 **Process:** Builder agent implements each task, QA agent reviews against CLAUDE.md and issues a verdict; fixes are applied and re-verified before the task is checked off and committed.
 
 ## Phase 1: Core Skeleton & Architecture
@@ -48,3 +46,13 @@
 
 - [x] Task 4.1: Audit responsiveness across mobile and desktop breakpoints.
 - [x] Task 4.2: Audit accessibility tags, semantic structure, and relative path compliance.
+
+## Phase 5: Changes After Human Check
+
+- [] Task 5.1: Ensure all header items are spaced evenly, they are currently wrapping.
+- [] Task 5.2: Ensure when back to top button is pressed that it lands so that the Face and title are not in view (end of the scroll animation where Professional experience is at top of page)
+- [] Task 5.3: Remove © 2026 Sam Stewart from footer
+- [] Task 5.4: Change view my experience button to "Down" with a downward arrow, make it so lands at the same position as back to top.
+- [] Task 5.5: replace `[LinkedIn]`/`[GitHub]` placeholder hrefs with TheSamStewart as username of both LinkedIn and Github, the bracketed hero tagline and section placeholder entries; confirm `https://thesamstewart.github.io/` as the canonical/OG base URL.
+- [] Task 5.6: Make proportions of slightly smaller
+- [] Task 5.7: Ensure the design-research.md has been implemented correctly - pick a colour scheme that is close to the current but pick for optimal proffesionality.
