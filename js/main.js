@@ -116,6 +116,31 @@ const initHeroScrollEffect = () => {
 };
 
 /* ------------------------------------------------------------
+   Task 5.13 — Start every load at the top of the page
+   ------------------------------------------------------------
+   Browsers restore the previous scroll position on reload, but
+   sections re-collapse on load, so the restored offset points at
+   content that is no longer there — on mobile the user lands
+   mid-page with the nav bar sitting over whatever remains.
+   Taking over scroll restoration and starting at the hero gives
+   every load the intended landing view. Hash deep-links are left
+   alone: openSectionForHash repositions those deterministically.
+   ------------------------------------------------------------ */
+const initScrollReset = () => {
+  if ('scrollRestoration' in window.history) {
+    window.history.scrollRestoration = 'manual';
+  }
+  if (window.location.hash) {
+    return;
+  }
+  /* Suppress CSS smooth scrolling for this one programmatic jump —
+     the reset must be instant, not an animated scroll on load. */
+  document.documentElement.style.scrollBehavior = 'auto';
+  window.scrollTo(0, 0);
+  document.documentElement.style.removeProperty('scroll-behavior');
+};
+
+/* ------------------------------------------------------------
    Task 5.12 — Nav visibility controller
    ------------------------------------------------------------
    .site-nav--hidden now has two independent reasons to be on:
@@ -421,6 +446,7 @@ const openSectionForHash = (accordion, scrollToTarget = false) => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+  initScrollReset();
   const navVisibility = createNavVisibility();
   const accordion = initSectionAccordion(navVisibility);
   initMobileNavAutoHide(navVisibility);
