@@ -175,10 +175,18 @@ const initMobileNavAutoHide = (navVisibility) => {
     if (observer) {
       return;
     }
-    observer = new IntersectionObserver((entries) => {
-      // Entries are batched; the last one is the current state.
-      navVisibility.setPastHero(!entries[entries.length - 1].isIntersecting);
-    });
+    /* rootMargin pulls the observed top edge 25% down the viewport,
+       so the hero counts as "gone" once its bottom passes the top
+       quarter of the screen — the same point where the scroll-shrink
+       fade completes (75% of hero height) — instead of waiting for
+       the last pixel to leave the viewport. */
+    observer = new IntersectionObserver(
+      (entries) => {
+        // Entries are batched; the last one is the current state.
+        navVisibility.setPastHero(!entries[entries.length - 1].isIntersecting);
+      },
+      { rootMargin: '-25% 0px 0px 0px' }
+    );
     observer.observe(hero);
   };
 
