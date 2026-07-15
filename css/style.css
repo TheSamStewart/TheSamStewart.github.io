@@ -278,7 +278,9 @@ img {
    so anchors can land below it (scroll-margin-top on .section).
 
    .site-nav--hidden (toggled by js/main.js while any section is
-   open) slides/fades the bar away with transform + opacity only:
+   open, and on mobile <=620px also while the hero is scrolled out
+   of view — Task 5.12) slides/fades the bar away with transform +
+   opacity only:
    its in-flow sticky box never changes, so layout and anchor
    positions stay stable mid-session. visibility + pointer-events
    make the hidden bar non-interactive and remove it from the

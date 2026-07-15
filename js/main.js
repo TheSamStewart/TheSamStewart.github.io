@@ -116,6 +116,101 @@ const initHeroScrollEffect = () => {
 };
 
 /* ------------------------------------------------------------
+   Task 5.12 — Nav visibility controller
+   ------------------------------------------------------------
+   .site-nav--hidden now has two independent reasons to be on:
+   - a section is open (all viewports — Task 3.4 behaviour), and
+   - on mobile, the hero has scrolled out of view (Task 5.12).
+   This controller is the single writer of the class so the two
+   sources can't fight over it: the bar is hidden while EITHER
+   reason holds and shown only when both clear.
+   ------------------------------------------------------------ */
+const createNavVisibility = () => {
+  const nav = document.querySelector('.site-nav');
+  const state = { sectionOpen: false, pastHero: false };
+  const apply = () => {
+    if (!nav) {
+      return;
+    }
+    nav.classList.toggle(
+      'site-nav--hidden',
+      state.sectionOpen || state.pastHero
+    );
+  };
+  return {
+    setSectionOpen: (value) => {
+      state.sectionOpen = value;
+      apply();
+    },
+    setPastHero: (value) => {
+      state.pastHero = value;
+      apply();
+    },
+  };
+};
+
+/* ------------------------------------------------------------
+   Task 5.12 — Mobile: hide the nav once the hero scrolls away
+   ------------------------------------------------------------
+   On phones the stacked nav bar is tall, so once the user scrolls
+   past the hero (name + portrait) it gets out of the way instead
+   of shadowing the content; scrolling back up brings it back.
+   Desktop keeps the bar until a section is opened (Task 3.4).
+
+   An IntersectionObserver on .hero (not the scroll-effect
+   listener) drives this so it also works when the hero effect is
+   disabled under prefers-reduced-motion. The 620px media query
+   must match the stacked-nav breakpoint in css/style.css.
+   ------------------------------------------------------------ */
+const initMobileNavAutoHide = (navVisibility) => {
+  const hero = document.querySelector('.hero');
+  if (!hero || !('IntersectionObserver' in window)) {
+    return; // No hero / very old browser: keep Task 3.4 behaviour.
+  }
+
+  const mobileViewport = window.matchMedia('(max-width: 620px)');
+  let observer = null;
+
+  const start = () => {
+    if (observer) {
+      return;
+    }
+    observer = new IntersectionObserver((entries) => {
+      // Entries are batched; the last one is the current state.
+      navVisibility.setPastHero(!entries[entries.length - 1].isIntersecting);
+    });
+    observer.observe(hero);
+  };
+
+  const stop = () => {
+    if (!observer) {
+      return;
+    }
+    observer.disconnect();
+    observer = null;
+    navVisibility.setPastHero(false);
+  };
+
+  const applyViewport = () => {
+    if (mobileViewport.matches) {
+      start();
+    } else {
+      stop();
+    }
+  };
+
+  // React live to rotation / window resizes across the breakpoint.
+  // (addListener fallback covers older Safari.)
+  if (typeof mobileViewport.addEventListener === 'function') {
+    mobileViewport.addEventListener('change', applyViewport);
+  } else if (typeof mobileViewport.addListener === 'function') {
+    mobileViewport.addListener(applyViewport);
+  }
+
+  applyViewport();
+};
+
+/* ------------------------------------------------------------
    Task 3.4 — Section accordion (expand / collapse)
    ------------------------------------------------------------
    Progressive enhancement: the static HTML renders every section
@@ -132,7 +227,9 @@ const initHeroScrollEffect = () => {
    no motion branching needed here.
 
    Per the design spec, the nav bar disappears while any section
-   is engaged: this module toggles .site-nav--hidden accordingly.
+   is engaged: this module reports open/closed state to the shared
+   nav-visibility controller (Task 5.12), which owns
+   .site-nav--hidden.
 
    Templating contract: entries are copy-pasted inside
    .section-body, which is never rewritten here — adding or
@@ -142,9 +239,8 @@ const initHeroScrollEffect = () => {
    section a clicked link scrolls to. Returns null if there are
    no sections to enhance.
    ------------------------------------------------------------ */
-const initSectionAccordion = () => {
+const initSectionAccordion = (navVisibility) => {
   const sections = Array.from(document.querySelectorAll('.section'));
-  const nav = document.querySelector('.site-nav');
   if (sections.length === 0) {
     return null;
   }
@@ -154,10 +250,7 @@ const initSectionAccordion = () => {
   /* Hide the nav while any section is open; bring it back when all
      are closed. Visual treatment lives in CSS (.site-nav--hidden). */
   const updateNavVisibility = () => {
-    if (!nav) {
-      return;
-    }
-    nav.classList.toggle('site-nav--hidden', sections.some(isOpen));
+    navVisibility.setSectionOpen(sections.some(isOpen));
   };
 
   const setOpen = (section, open) => {
@@ -320,7 +413,9 @@ const openSectionForHash = (accordion, scrollToTarget = false) => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  const accordion = initSectionAccordion();
+  const navVisibility = createNavVisibility();
+  const accordion = initSectionAccordion(navVisibility);
+  initMobileNavAutoHide(navVisibility);
   // Nav first: it publishes --nav-height, which the hero's CSS
   // min-height (and therefore the hero effect's fade distance)
   // depends on — the hero must measure itself after that.
