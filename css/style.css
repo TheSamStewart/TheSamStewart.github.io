@@ -652,6 +652,20 @@ img {
   margin-bottom: 0;
 }
 
+/* Year sub-heading inside a multi-year education entry's main-text */
+.education-year {
+  margin: var(--space-sm) 0 var(--space-xs);
+  color: var(--color-fourth);
+  font-size: var(--text-meta);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.education-item-main-text > .education-year:first-of-type {
+  margin-top: 0;
+}
+
 /* Bullet lists inside any -main-text block */
 .experience-main-text ul,
 .education-item-main-text ul,
